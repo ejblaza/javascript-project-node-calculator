@@ -1,56 +1,60 @@
-var numOne = 0;
-var numTwo = 0;
-var result = 0;
-var opCheck = false;
+const rs = require("readline-sync");
 
-var rs = require("readline-sync");
-
-var operator = rs.question(
-  'What operation would you like to perform? "+", "-", "*", "/", or "%": '
-);
-
-if (
-  operator == "+" ||
-  operator == "-" ||
-  operator == "*" ||
-  operator == "/" ||
-  operator == "%"
-) {
-  opCheck = true;
-} else {
-  while (!opCheck) {
-    operator = rs.question('Invalid input! "+", "-", "*", "/", or "%":  ');
-    if (
-      operator == "+" ||
-      operator == "-" ||
-      operator == "*" ||
-      operator == "/" ||
-      operator == "%"
-    ) {
-      opCheck = true;
+const createOpString = (arrOperators) => {
+  let resultString = "";
+  for (let i = 0; i < arrOperators.length; i++) {
+    if (i < arrOperators.length - 1) {
+      resultString += '"' + arrOperators[i] + '", ';
+    } else {
+      resultString += 'or "' + arrOperators[i] + '"';
     }
   }
-}
+  return resultString;
+};
 
-numOne = rs.questionInt("Please enter the first number: ");
-numTwo = rs.questionInt("Please enter the second number: ");
+const getOperator = (opArr) => {
+  let operator = rs.question(
+    `What operation would you like to perform? ${operatorsFormattedString}: `
+  );
+  if (opArr.includes(operator)) {
+    return operator;
+  } else {
+    while (!opArr.includes(operator)) {
+      operator = rs.question(`Invalid input! ${operatorsFormattedString}: `);
+      if (opArr.includes(operator)) {
+        return operator;
+      }
+    }
+  }
+};
 
-switch (operator) {
-  case "+":
-    result = numOne + numTwo;
-    break;
-  case "-":
-    result = numOne - numTwo;
-    break;
-  case "*":
-    result = numOne * numTwo;
-    break;
-  case "/":
-    result = numOne / numTwo;
-    break;
-  case "%":
-    result = numOne % numTwo;
-    break;
-}
+const numOrder = (num) => rs.questionInt(`Please enter the ${num} number: `);
 
-console.log(`Result: ${numOne} ${operator} ${numTwo} = ${result}`);
+const doMath = (op, n1, n2) => {
+  switch (op) {
+    case "+":
+      return n1 + n2;
+    case "-":
+      return n1 - n2;
+    case "*":
+      return n1 * n2;
+    case "/":
+      return n1 / n2;
+    case "%":
+      return n1 % n2;
+  }
+};
+
+const runCalculator = (valid) => {
+  const operator = getOperator(valid);
+  const numOne = numOrder("first");
+  const numTwo = numOrder("second");
+  const result = doMath(operator, numOne, numTwo);
+
+  console.log(`Result: ${numOne} ${operator} ${numTwo} = ${result}`);
+};
+
+const validOperators = ["+", "-", "*", "/", "%"];
+const operatorsFormattedString = createOpString(validOperators);
+
+runCalculator(validOperators);
